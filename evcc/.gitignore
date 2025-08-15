@@ -20,9 +20,6 @@ __debug_bin*
 !tests/**/*.evcc.yaml
 !tsconfig.json
 /templates/docs
-evcc
-evcc.exe
-evcc_*
 linux-*.Dockerfile
 builddir
 dist
