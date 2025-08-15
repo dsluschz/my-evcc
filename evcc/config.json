@@ -11,6 +11,5 @@
   "host_network": true,
   "privileged": ["NET_ADMIN"],
   "options": {},
-  "schema": {},
-  "image": null
+  "schema": {}
 }
