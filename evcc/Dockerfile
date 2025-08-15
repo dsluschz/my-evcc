@@ -1,5 +1,27 @@
+ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
+FROM $BUILD_FROM
+
+ENV LANG C.UTF-8
+
+# Tools installieren
+RUN apk add --no-cache git make curl go yarn nodejs npm bash gcc g++ libc-dev linux-headers
+
+# EVCC Repository klonen und bauen
+ENV EVCC_REPO=https://github.com/dsluschz/EVCC-QAB.git
+ENV EVCC_BRANCH=master
+
+RUN git clone --branch ${EVCC_BRANCH} ${EVCC_REPO} /build \
+    && cd /build \
+    && go generate ./...
+    && make install
+
+
 # STEP 1 build ui
 FROM --platform=$BUILDPLATFORM node:22-alpine AS node
+
+ENV TARGETOS=linux \
+    TARGETARCH=arm64 \
+    TARGETVARIANT=v7
 
 RUN apk update && apk add --no-cache make
 
@@ -20,7 +42,7 @@ RUN make ui
 
 
 # STEP 2 build executable binary
-FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:1.24-alpine AS builder
 
 # Install git + SSL ca certificates.
 # Git is required for fetching the dependencies.
@@ -40,7 +62,6 @@ RUN go mod download
 # install tools
 COPY Makefile .
 COPY cmd/decorate/ cmd/decorate/
-COPY cmd/openapi/ cmd/openapi/
 COPY api/ api/
 RUN make install
 
@@ -94,3 +115,9 @@ HEALTHCHECK --interval=60s --start-period=60s --timeout=30s --retries=3 CMD [ "e
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]
 CMD [ "evcc" ]
+
+# run.sh kopieren
+COPY run.sh /run.sh
+RUN chmod +x /run.sh
+
+CMD [ "/run.sh" ]
