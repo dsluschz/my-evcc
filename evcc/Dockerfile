@@ -2,7 +2,7 @@ ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
 FROM $BUILD_FROM
 
 ENV LANG=C.UTF-8 \
-    EVCC_REPO=https://github.com/dsluschz/EVCC-QAB.git \
+    EVCC_REPO=https://github.com/dsluschz/my-evcc.git \
     EVCC_BRANCH=master
 
 # Tools installieren
