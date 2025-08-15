@@ -1,27 +1,12 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
-FROM $BUILD_FROM
+FROM ${BUILD_FROM}
 
-ENV LANG=C.UTF-8 \
-    EVCC_REPO=https://github.com/dsluschz/my-evcc.git \
-    EVCC_BRANCH=master
+# Build-Abhängigkeiten installieren
+RUN apk add --no-cache \
+    git make curl go yarn nodejs npm bash gcc g++ libc-dev linux-headers
 
-# Tools installieren
-RUN apk add --no-cache git make curl go yarn nodejs npm bash gcc g++ libc-dev linux-headers
-
-# EVCC klonen und bauen
-RUN git clone --branch ${EVCC_BRANCH} ${EVCC_REPO} /build \
+# EVCC klonen und bauen (direkt mit fixer URL statt Variablen)
+RUN git clone --branch master https://github.com/dsluschz/my-evcc.git /build \
     && cd /build \
     && go generate ./... \
     && make install
-
-# Ports freigeben
-EXPOSE 7070/tcp \
-       5353/udp \
-       4712/tcp \
-       7090/udp \
-       8887/tcp \
-       8899/udp \
-       9522/udp
-
-# Standard-Startbefehl
-CMD ["evcc"]
