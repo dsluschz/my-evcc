@@ -7,7 +7,7 @@ ENV LANG C.UTF-8
 RUN apk add --no-cache git make curl go yarn nodejs npm bash gcc g++ libc-dev linux-headers
 
 # EVCC Repository klonen und bauen
-ENV EVCC_REPO=https://github.com/dsluschz/EVCC-QAB.git
+ENV EVCC_REPO=https://github.com/dsluschz/my-evcc.git
 ENV EVCC_BRANCH=master
 
 RUN git clone --branch ${EVCC_BRANCH} ${EVCC_REPO} /build \
