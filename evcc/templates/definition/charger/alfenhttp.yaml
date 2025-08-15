@@ -1,0 +1,14 @@
+template: alfenhttp
+products:
+  - brand: Alfen
+    description:
+      generic: Eve (HTTP)
+params:
+  - name: host
+    required: true
+  - name: password
+    required: true
+render: |
+  type: alfenhttp
+  uri: https://{{ .host }}
+  password: {{ .password }}
