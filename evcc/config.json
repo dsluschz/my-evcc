@@ -1,0 +1,16 @@
+{
+  "name": "evcc",
+  "version": "0.1.0",
+  "slug": "evcc",
+  "description": "my EVCC für Homeassistant",
+  "startup": "application",
+  "boot": "auto",
+  "arch": ["aarch64"],
+  "init": false,
+  "ingress": false,
+  "host_network": true,
+  "privileged": ["NET_ADMIN"],
+  "options": {},
+  "schema": {},
+  "image": null
+}
