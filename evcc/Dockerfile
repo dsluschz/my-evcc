@@ -6,15 +6,15 @@ RUN apk update && apk add --no-cache make
 WORKDIR /build
 
 # install node tools
-COPY evcc/package*.json ./        # <- angepasst: aus evcc/
+COPY package*.json ./
 RUN npm ci
 
 # build ui
-COPY evcc/Makefile .              # <- angepasst: aus evcc/
-COPY evcc/.*.js ./                # <- angepasst: aus evcc/
-COPY evcc/*.js ./                 # <- angepasst: aus evcc/
-COPY evcc/assets assets           # <- angepasst: aus evcc/
-COPY evcc/i18n i18n               # <- angepasst: aus evcc/
+COPY Makefile .
+COPY .*.js ./
+COPY *.js ./
+COPY assets assets
+COPY i18n i18n
 
 RUN make ui
 
@@ -22,26 +22,30 @@ RUN make ui
 # STEP 2 build executable binary
 FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS builder
 
+# Install git + SSL ca certificates.
+# Git is required for fetching the dependencies.
+# Ca-certificates is required to call HTTPS endpoints.
 RUN apk update && apk add --no-cache git make patch tzdata ca-certificates && update-ca-certificates
 
+# define RELEASE=1 to hide commit hash
 ARG RELEASE=0
 
 WORKDIR /build
 
 # download modules
-COPY evcc/go.mod .                # <- angepasst: aus evcc/
-COPY evcc/go.sum .                # <- angepasst: aus evcc/
+COPY go.mod .
+COPY go.sum .
 RUN go mod download
 
 # install tools
-COPY evcc/Makefile .              # <- angepasst: aus evcc/
-COPY evcc/cmd/decorate/ cmd/decorate/
-COPY evcc/cmd/openapi/ cmd/openapi/
-COPY evcc/api/ api/
+COPY Makefile .
+COPY cmd/decorate/ cmd/decorate/
+COPY cmd/openapi/ cmd/openapi/
+COPY api/ api/
 RUN make install
 
 # prepare
-COPY evcc/ .                       # <- angepasst: aus evcc/
+COPY . .
 RUN make patch-asn1
 RUN make assets
 
