@@ -12,7 +12,7 @@ ENV EVCC_BRANCH=master
 
 RUN git clone --branch ${EVCC_BRANCH} ${EVCC_REPO} /build \
     && cd /build \
-    && go generate ./...
+    && go generate ./... \
     && make install
 
 
